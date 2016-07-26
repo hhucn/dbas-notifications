@@ -29,9 +29,13 @@ io.sockets.on('connection', function(socket){
     addIDtoSocket(socket);
 
     // remove
-    socket.on('disconnect', function(socket_id){
-        removeMappings(socket_id)
-        removeIDtoSocket(socket_id);
+    socket.on('disconnect', function(){
+        removeIDtoSocket(socket.id);
+    });
+
+    // remove
+    socket.on('remove_name', function(name){
+        removeNameToSocket(name);
     });
 });
 
@@ -90,21 +94,13 @@ removeIDtoSocket = function(socket_id){
 // Add name of client to dictionary
 addNameToSocket = function(name, socketid){
     mapNameToSocket[name] = socketid;
-    logMessage('Added ' + socketid + ' into name dict');
+    logMessage('Added ' + name + ':' + socketid + ' into name dict');
 };
 
 // Remove name of client from dictionary
-removeNameToSocket = function(socket_id){
-    for(var key in mapNameToSocket) {
-        if(mapNameToSocket[key] === socket_id) {
-            delete mapNameToSocket[key];
-            logMessage('Removed ' + name + ' from name dict');
-            return;
-        }
-    }
-
+removeNameToSocket = function(name){
+    logMessage('Removed ' + name + ':' + mapNameToSocket[name] + ' from name dict');
     delete mapNameToSocket[name];
-    logMessage('Could not key ' + socket_id + ' from name dict');
 };
 
 // Parses url
