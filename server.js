@@ -16,18 +16,37 @@ var server = http.createServer(app);
 server.listen(port);
 var io = require('socket.io').listen(server);
 
+// Read custom data of handshake
+io.use(function(socket, next){
+    // add mapping from name to socketid
+    addNameToSocket(socket.handshake.query.nickname, socket.id)
+    return next();
+});
+
+// Event on connection
+io.sockets.on('connection', function(socket){
+    // add mapping from socketid to socket
+    addIDtoSocket(socket);
+
+    // remove
+    socket.on('disconnect', function(socket_id){
+        removeMappings(socket_id)
+        removeIDtoSocket(socket_id);
+    });
+});
+
 // route
 app.get('/publish', function(req, res){
     var params = getDictOfParams(req['url']);
     var dict = ''
 
-    if (params['type'] == 'notification'){
+    if (params['type'] == 'notification'){ // notifications
         dict = { 'msg': params['msg'], 'type': 'notifications'}
-    } else if (params['type'] == 'mention'){
+    } else if (params['type'] == 'mention'){ // user was mentioned
         dict = { 'msg': params['msg'], 'type': 'mention', 'url': params['url']};
-    } else if (params['type'] == 'edittext'){
+    } else if (params['type'] == 'edittext'){ // text was edited
         dict = { 'msg': params['msg'], 'type': 'edittext', 'url': params['url']};
-    } else {
+    } else { // everything else
         res.writeHead(400);
         res.write('0');
         res.end();
@@ -37,7 +56,8 @@ app.get('/publish', function(req, res){
 
     try {
         if (dict != ''){
-            mapIDtoSocket[params['socket_id']].emit('publish', dict);
+            var socket_id = mapNameToSocket[params['nickname']];
+            mapIDtoSocket[socket_id].emit('publish', dict);
             res.writeHead(200);
             res.write('1');
         }
@@ -49,32 +69,42 @@ app.get('/publish', function(req, res){
     res.end();
 });
 
-// Event on connection
-io.sockets.on('connection', function(socket){
-    addClient(socket);
-    socket.emit('subscribe', socket.id);
-
-    socket.on('disconnect', function(){
-        removeClient(socket);
-    });
-});
-
 // Console logger
 logMessage = function(msg){
     var time = new Date().today() + ' ' + new Date().timeNow();
     console.log(time + ' ' + msg);
 };
 
-// Add client to dictionary
-addClient = function(socket){
+// Add socketid of client to dictionary
+addIDtoSocket = function(socket){
     mapIDtoSocket[socket.id] = socket;
-    logMessage('Added ' + socket.id + ' into dict');
+    logMessage('Added ' + socket.id + ' into socketid dict');
 };
 
-// Remove client from dictionary
-removeClient = function(socket){
-    delete mapIDtoSocket[socket.id];
-    logMessage('Removed ' + socket.id + ' from dict');
+// Remove socketid of client from dictionary
+removeIDtoSocket = function(socket_id){
+    delete mapIDtoSocket[socket_id];
+    logMessage('Removed ' + socket_id + ' from socketid dict');
+};
+
+// Add name of client to dictionary
+addNameToSocket = function(name, socketid){
+    mapNameToSocket[name] = socketid;
+    logMessage('Added ' + socketid + ' into name dict');
+};
+
+// Remove name of client from dictionary
+removeNameToSocket = function(socket_id){
+    for(var key in mapNameToSocket) {
+        if(mapNameToSocket[key] === socket_id) {
+            delete mapNameToSocket[key];
+            logMessage('Removed ' + name + ' from name dict');
+            return;
+        }
+    }
+
+    delete mapNameToSocket[name];
+    logMessage('Could not key ' + socket_id + ' from name dict');
 };
 
 // Parses url
