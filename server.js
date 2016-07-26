@@ -2,7 +2,8 @@
 // Tobias Krauthoff <krauthoff@cs.uni-duesseldorf.de>
 
 var port = 5001;
-var clients = {};
+var mapIDtoSocket = {};
+var mapNameToSocket = {};
 
 var express = require('express');
 var app = express();
@@ -25,7 +26,7 @@ app.get('/publish', function(req, res){
     } else if (params['type'] == 'mention'){
         dict = { 'msg': params['msg'], 'type': 'mention', 'url': params['url']};
     } else if (params['type'] == 'edittext'){
-        dict = { 'msg': params['msg'], 'type': 'edit_text', 'url': params['url']};
+        dict = { 'msg': params['msg'], 'type': 'edittext', 'url': params['url']};
     } else {
         res.writeHead(400);
         res.write('0');
@@ -36,7 +37,7 @@ app.get('/publish', function(req, res){
 
     try {
         if (dict != ''){
-            clients[params['socket_id']].emit('publish', dict);
+            mapIDtoSocket[params['socket_id']].emit('publish', dict);
             res.writeHead(200);
             res.write('1');
         }
@@ -66,13 +67,13 @@ logMessage = function(msg){
 
 // Add client to dictionary
 addClient = function(socket){
-    clients[socket.id] = socket;
+    mapIDtoSocket[socket.id] = socket;
     logMessage('Added ' + socket.id + ' into dict');
 };
 
 // Remove client from dictionary
 removeClient = function(socket){
-    delete clients[socket.id];
+    delete mapIDtoSocket[socket.id];
     logMessage('Removed ' + socket.id + ' from dict');
 };
 
@@ -87,8 +88,9 @@ getDictOfParams = function(url){
         split = entry.split('=');
         if (split[0] == 'socket_id')
             split[1] = '/#' + split[1];
-        if (split[0] == 'msg')
+        else if (split[0] == 'msg')
             split[1] = split[1].replace('%20', ' ');
+
         dict[split[0]] = split[1];
         logMessage('  Reading params: ' + split[0] + ' -> ' + split[1]);
     });
