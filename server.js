@@ -15,47 +15,35 @@ var server = http.createServer(app);
 server.listen(port);
 var io = require('socket.io').listen(server);
 
-// route for notifications
-app.get('/publish/notification', function(req, res){
+// route
+app.get('/publish', function(req, res){
     var params = getDictOfParams(req['url']);
-    try {
-        clients[params['socket_id']].emit('publish', {
-        	'msg': params['msg'].replace('%20', ' '),
-	        'type': 'notifications'});
-        res.writeHead(200);
-    } catch (e) {
-        logMessage('  No socket for socket_id ' + params['socket_id']);
+    var dict = ''
+
+    if (params['type'] == 'notification'){
+        dict = { 'msg': params['msg'], 'type': 'notifications'}
+    } else if (params['type'] == 'mention'){
+        dict = { 'msg': params['msg'], 'type': 'mention', 'url': params['url']};
+    } else if (params['type'] == 'edittext'){
+        dict = { 'msg': params['msg'], 'type': 'edit_text', 'url': params['url']};
+    } else {
         res.writeHead(400);
+        res.write('0');
+        res.end();
+        logMessage('  Unknown type: ' + params['type']);
+        return;
     }
-    res.end();
-});
 
-// route for mention
-app.get('/publish/mention', function(req, res) {
-	var params = getDictOfParams(req['url']);
-	try {
-		clients[params['socket_id']].emit('publish', {
-			'msg': params['msg'].replace('%20', ' '),
-			'type': 'mention',
-			'url': params['url']
-		});
-		res.writeHead(200);
-	} catch (e) {
-		logMessage('  No socket for socket_id ' + params['socket_id']);
-		res.writeHead(400);
-	}
-	res.end();
-});
-
-// route for notifications
-app.get('/publish/notification', function(req, res){
-    var params = getDictOfParams(req['url']);
     try {
-        clients[params['socket_id']].emit('publish', {'msg': params['msg'].replace('%20', ' '), 'type': 'notifications'});
-        res.writeHead(200);
+        if (dict != ''){
+            clients[params['socket_id']].emit('publish', dict);
+            res.writeHead(200);
+            res.write('1');
+        }
     } catch (e) {
         logMessage('  No socket for socket_id ' + params['socket_id']);
         res.writeHead(400);
+        res.write('0');
     }
     res.end();
 });
@@ -99,8 +87,10 @@ getDictOfParams = function(url){
         split = entry.split('=');
         if (split[0] == 'socket_id')
             split[1] = '/#' + split[1];
+        if (split[0] == 'msg')
+            split[1] = split[1].replace('%20', ' ');
         dict[split[0]] = split[1];
-        logMessage('  ' + split[0] + ': ' + split[1]);
+        logMessage('  Reading params: ' + split[0] + ' -> ' + split[1]);
     });
     return dict;
 };
