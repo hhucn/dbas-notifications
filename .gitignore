@@ -1,0 +1,52 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.mo
+
+# Distribution / packaging
+build/
+dist/
+lib64/
+sdist/
+*.egg
+*.egg-info/
+source/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+
+# Webapp stuff
+*.log
+*.pid
+*.db
+*.sqlite
+*.sqlite-journal
+
+# Sphinx documentation
+# docs/
+*_build
+
+# Misc
+.python-version
+#*.sh
+*.bak
+pull*.sh
+dbas/static/minimize.sh
+
+# Pycharm
+.idea/
+data/
+
+# Splinter
+C:\\nppdf32Log\\debuglog.txt
+
+# NPM
+node_modules/
