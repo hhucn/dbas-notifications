@@ -129,7 +129,7 @@ getDictOfParams = function(url){
         if (split[0] == 'socket_id')
             split[1] = '/#' + split[1];
         else if (split[0] == 'msg')
-            split[1] = split[1].replace('%20', ' ');
+            split[1] = split[1].replace(/\%20/g, ' ');
 
         dict[split[0]] = split[1];
         logMessage('  Reading params: ' + split[0] + ' -> ' + split[1]);
