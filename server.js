@@ -27,6 +27,7 @@ io.use(function(socket, next){
 io.sockets.on('connection', function(socket){
     // add mapping from socketid to socket
     addIDtoSocket(socket);
+    socket.emit('testid', socket.id)
 
     // remove
     socket.on('disconnect', function(){
