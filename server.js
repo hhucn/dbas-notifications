@@ -29,14 +29,27 @@ io.sockets.on('connection', function(socket){
     addIDtoSocket(socket);
     socket.emit('testid', socket.id)
 
-    // remove
+    // remove on disconnect
     socket.on('disconnect', function(){
         removeIDtoSocket(socket.id);
     });
 
-    // remove
+    // remove on message
     socket.on('remove_name', function(name){
         removeNameToSocket(name);
+    });
+
+    // remove on message
+    socket.on('test', function(type){
+        logMessage('Debugging ' + type);
+        if (type == 'success')
+            socket.emit('test', {type: 'success', msg: 'some success message'});
+        else if (type == 'danger')
+            socket.emit('test', {type: 'warning', msg: 'some warning message'});
+        else if (type == 'info')
+            socket.emit('test', {type: 'info', msg: 'some info message'});
+        else
+            socket.emit('test', {type: 'unknown', msg: 'some unknown message'});
     });
 });
 
