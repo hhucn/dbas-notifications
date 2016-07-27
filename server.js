@@ -11,7 +11,7 @@ var url = require('url');
 
 var http = require('http');
 var https = require('https');
-var server = https.createServer(app);
+var server = http.createServer(app);
 
 server.listen(port);
 var io = require('socket.io').listen(server);
