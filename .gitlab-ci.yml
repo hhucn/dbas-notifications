@@ -1,0 +1,8 @@
+image: node:6
+
+before_script:
+  - node --version
+
+build_image:
+  script:
+    - npm install
