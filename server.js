@@ -1,7 +1,6 @@
 // Node.JS server with socket.io plugin for bidirectional event-based communcation
 // Tobias Krauthoff <krauthoff@cs.uni-duesseldorf.de>
 
-// openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pemopenssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -nodes
 const port = 5001;
 const mapIDtoSocket = {};
 const mapNameToSocket = {};
@@ -12,12 +11,35 @@ const http = require('http');
 const url = require('url');
 const fs = require('fs');
 const app = express();
-const options = {
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('cert.pem')
-};
-//const credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
-const server = http.createServer(app).listen(port);
+
+// read params
+var is_global_mode = false;
+if (process.argv.length != 3){
+    console.log('Please set an option: --global, --local');
+    return;
+} else {
+    if (process.argv[2] == '--global'){
+        console.log('Start global mode...');
+        is_global_mode = true
+    } else if (process.argv[2] != '--local'){
+        console.log('Your parameter was incorre.t Please set an option: --global, --local');
+        return;
+    } else {
+        console.log('Start local mode...');
+    }
+}
+
+// start with https ot http
+if (is_global_mode){
+    const options = {
+        key: fs.readFileSync('/etc/nginx/ssl/server.key'),
+        cert: fs.readFileSync('/etc/nginx/ssl/server.crt')
+    };
+    const credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
+    var server = https.createServer(credentials, app).listen(port);
+} else {
+    var server = http.createServer(app).listen(port);
+}
 const io = require('socket.io').listen(server);
 
 // Read custom data of handshake
