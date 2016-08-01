@@ -1,20 +1,24 @@
 // Node.JS server with socket.io plugin for bidirectional event-based communcation
 // Tobias Krauthoff <krauthoff@cs.uni-duesseldorf.de>
 
-var port = 5001;
-var mapIDtoSocket = {};
-var mapNameToSocket = {};
+// openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pemopenssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -nodes
+const port = 5001;
+const mapIDtoSocket = {};
+const mapNameToSocket = {};
 
-var express = require('express');
-var app = express();
-var url = require('url');
-
-var http = require('http');
-var https = require('https');
-var server = http.createServer(app);
-
-server.listen(port);
-var io = require('socket.io').listen(server);
+const express = require('express');
+const https = require('https');
+const http = require('http');
+const url = require('url');
+const fs = require('fs');
+const app = express();
+const options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+};
+//const credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
+const server = https.createServer(options, app).listen(port);
+const io = require('socket.io').listen(server);
 
 // Read custom data of handshake
 io.use(function(socket, next){
