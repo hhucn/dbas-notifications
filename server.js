@@ -17,7 +17,7 @@ const options = {
     cert: fs.readFileSync('cert.pem')
 };
 //const credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
-const server = https.createServer(options, app).listen(port);
+const server = http.createServer(app).listen(port);
 const io = require('socket.io').listen(server);
 
 // Read custom data of handshake
