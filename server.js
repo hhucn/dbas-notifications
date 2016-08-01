@@ -6,6 +6,7 @@ const mapIDtoSocket = {};
 const mapNameToSocket = {};
 
 const express = require('express');
+const crypto = require('crypto');
 const https = require('https');
 const http = require('http');
 const url = require('url');
