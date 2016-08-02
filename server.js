@@ -37,8 +37,8 @@ if (is_global_mode){
         // /usr/local/sbin/le-renew-webroot
         //key: fs.readFileSync('/etc/nginx/ssl/server.key'),
         //cert: fs.readFileSync('/etc/nginx/ssl/server.crt'),
-        pfx: fs.readFileSync('mycert.pfx')
-        password: 'sOmE_PassW0rdsOmE_PassW0rd'
+        pfx: fs.readFileSync('mycert.pfx'),
+        passphrase: 'sOmE_PassW0rd'
     };
     //const credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
     var server = https.createServer(options, app).listen(port);
