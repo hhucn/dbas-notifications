@@ -8,4 +8,4 @@ ADD . /code
 
 RUN npm install
 
-CMD nodejs server.js
+CMD nodejs server.js -l

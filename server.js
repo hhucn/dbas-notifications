@@ -16,14 +16,14 @@ const app = express();
 // read params
 var is_global_mode = false;
 if (process.argv.length != 3){
-    console.log('Please set an option: --global, --local');
+    console.log('Please set an option: --global (-g), --local (-l)');
     return;
 } else {
-    if (process.argv[2] == '--global'){
+    if (process.argv[2] == '--global' || process.argv[2] == '-g'){
         console.log('Start global mode...');
         is_global_mode = true
-    } else if (process.argv[2] != '--local'){
-        console.log('Your parameter was incorre.t Please set an option: --global, --local');
+    } else if (process.argv[2] != '--local' && process.argv[2] != '-l'){
+        console.log('Your parameter was incorre.t Please set an option: ---global (-g), --local (-l)');
         return;
     } else {
         console.log('Start local mode...');
