@@ -35,9 +35,10 @@ if (is_global_mode){
     const options = {
         // PFX will be created by the webroot script:
         // /usr/local/sbin/le-renew-webroot
-        //key: fs.readFileSync('/etc/nginx/ssl/server.key'),
-        //cert: fs.readFileSync('/etc/nginx/ssl/server.crt'),
-        pfx: fs.readFileSync('mycert.pfx'),
+        key: fs.readFileSync('/etc/nginx/ssl/server.key'),
+        cert: fs.readFileSync('/etc/nginx/ssl/server.crt'),
+        ca: fs.readFileSync('/etc/nginx/ssl/isrgrootx1.pem'),
+	pfx: fs.readFileSync('mycert.pfx'),
         passphrase: 'sOmE_PassW0rd'
     };
     //const credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
