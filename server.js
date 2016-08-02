@@ -9,6 +9,7 @@ const express = require('express');
 const crypto = require('crypto');
 const https = require('https');
 const http = require('http');
+const tls = require('tls');
 const url = require('url');
 const fs = require('fs');
 const app = express();
@@ -35,11 +36,12 @@ if (is_global_mode){
     const options = {
         // PFX will be created by the webroot script:
         // /usr/local/sbin/le-renew-webroot
-        key: fs.readFileSync('/etc/nginx/ssl/server.key'),
-        //cert: fs.readFileSync('/etc/nginx/ssl/server.crt'),
-        cert: fs.readFileSync('fullchain.pem'),
-	pfx: fs.readFileSync('mycert.pfx'),
-        passphrase: 'sOmE_PassW0rd'
+        //key:   fs.readFileSync('/etc/nginx/ssl/server.key'),
+        //cert:  fs.readFileSync('/etc/nginx/ssl/server.crt'),
+        //pfx:   fs.readFileSync('mycert.pfx'),
+        //passphrase: 'sOmE_PassW0rd'
+        cert:  fs.readFileSync('fullchain.pem'),
+        key:   fs.readFileSync('privkey.pem')
     };
     //const credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
     var server = https.createServer(options, app).listen(port);
