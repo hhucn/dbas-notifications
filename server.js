@@ -9,7 +9,6 @@ const express = require('express');
 const crypto = require('crypto');
 const https = require('https');
 const http = require('http');
-const tls = require('tls');
 const url = require('url');
 const fs = require('fs');
 const app = express();
@@ -34,12 +33,11 @@ if (process.argv.length != 3){
 // start with https ot http
 if (is_global_mode){
     const options = {
-        // PFX will be created by the webroot script:
-        // /usr/local/sbin/le-renew-webroot
+        // Chain and key will be copied by /usr/local/sbin/le-renew-webroot
         //key:   fs.readFileSync('/etc/nginx/ssl/server.key'),
         //cert:  fs.readFileSync('/etc/nginx/ssl/server.crt'),
         //pfx:   fs.readFileSync('mycert.pfx'),
-        //passphrase: 'sOmE_PassW0rd'
+        //passphrase: 'sOmE_PassW0rd',
         cert:  fs.readFileSync('fullchain.pem'),
         key:   fs.readFileSync('privkey.pem')
     };
@@ -121,37 +119,57 @@ app.get('/publish', function(req, res){
     res.end();
 });
 
-// Console logger
+/**
+ * Console logger
+ * @param msg String
+ */
 logMessage = function(msg){
     var time = new Date().today() + ' ' + new Date().timeNow();
     console.log(time + ' ' + msg);
 };
 
-// Add socketid of client to dictionary
+/**
+ * Add socketid of client to dictionary
+ * @param socket Socket
+ */
 addIDtoSocket = function(socket){
     mapIDtoSocket[socket.id] = socket;
     logMessage('Added ' + socket.id + ' into socketid dict');
 };
 
-// Remove socketid of client from dictionary
+/**
+ * Remove socketid of client from dictionary
+ * @param socket_id integer
+ */
 removeIDtoSocket = function(socket_id){
     delete mapIDtoSocket[socket_id];
     logMessage('Removed ' + socket_id + ' from socketid dict');
 };
 
-// Add name of client to dictionary
+/**
+ * Add name of client to dictionary
+ * @param name String
+ * @param socketid integer
+ */
 addNameToSocket = function(name, socketid){
     mapNameToSocket[name] = socketid;
     logMessage('Added ' + name + ':' + socketid + ' into name dict');
 };
 
-// Remove name of client from dictionary
+/**
+ * Remove name of client from dictionary
+ * @param name String
+ */
 removeNameToSocket = function(name){
     logMessage('Removed ' + name + ':' + mapNameToSocket[name] + ' from name dict');
     delete mapNameToSocket[name];
 };
 
-// Parses url
+/**
+ * Parses url
+ * @param url String
+ * @return dictionary
+ */
 getDictOfParams = function(url){
     logMessage(url);
     var param = url.substr(url.indexOf('?')+1);
@@ -171,14 +189,14 @@ getDictOfParams = function(url){
     return dict;
 };
 
-// For todays date;
+// Enhance the Date with a today function, which returns DD.MM.YYYY
 Date.prototype.today = function () {
     return ((this.getDate() < 10)?"0":"") + this.getDate() + "."
         + (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) + "."
         + this.getFullYear();
 };
 
-// For the time now
+// Enhance the Date with a today function, which returns HH:MM:SS
 Date.prototype.timeNow = function () {
      return ((this.getHours() < 10)?"0":"") + this.getHours() + ":"
         + ((this.getMinutes() < 10)?"0":"") + this.getMinutes() + ":"
