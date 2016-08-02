@@ -33,11 +33,12 @@ if (process.argv.length != 3){
 // start with https ot http
 if (is_global_mode){
     const options = {
-        key: fs.readFileSync('/etc/nginx/ssl/server.key'),
-        cert: fs.readFileSync('/etc/nginx/ssl/server.crt')
+        //key: fs.readFileSync('/etc/nginx/ssl/server.key'),
+        //cert: fs.readFileSync('/etc/nginx/ssl/server.crt'),
+        pfx: fs.readFileSync('mycert.pfx')
     };
-    const credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
-    var server = https.createServer(credentials, app).listen(port);
+    //const credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
+    var server = https.createServer(options, app).listen(port);
 } else {
     var server = http.createServer(app).listen(port);
 }
