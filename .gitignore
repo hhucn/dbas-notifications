@@ -1,4 +1,6 @@
 # NPM
 node_modules/
 
-mycert.pfx
+*.pfx
+*.crt
+*.pem
