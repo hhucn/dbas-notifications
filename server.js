@@ -51,9 +51,10 @@ const io = require('socket.io').listen(server);
 // Read custom data of handshake
 io.use(function(socket, next){
     // add mapping from name to socketid
-    addNameToSocket(socket.handshake.query.nickname, socket.id)
+    addNameToSocketId(socket.handshake.query.nickname, socket.id)
     return next();
 });
+
 
 // Event on connection
 io.sockets.on('connection', function(socket){
@@ -68,7 +69,7 @@ io.sockets.on('connection', function(socket){
 
     // remove on message
     socket.on('remove_name', function(name){
-        removeNameToSocket(name);
+        removeNameToSocketId(name);
     });
 
     // remove on message
@@ -120,15 +121,6 @@ app.get('/publish', function(req, res){
 });
 
 /**
- * Console logger
- * @param msg String
- */
-logMessage = function(msg){
-    var time = new Date().today() + ' ' + new Date().timeNow();
-    console.log(time + ' ' + msg);
-};
-
-/**
  * Add socketid of client to dictionary
  * @param socket Socket
  */
@@ -151,7 +143,7 @@ removeIDtoSocket = function(socket_id){
  * @param name String
  * @param socketid integer
  */
-addNameToSocket = function(name, socketid){
+addNameToSocketId = function(name, socketid){
     mapNameToSocket[name] = socketid;
     logMessage('Added ' + name + ':' + socketid + ' into name dict');
 };
@@ -160,9 +152,18 @@ addNameToSocket = function(name, socketid){
  * Remove name of client from dictionary
  * @param name String
  */
-removeNameToSocket = function(name){
+removeNameToSocketId = function(name){
     logMessage('Removed ' + name + ':' + mapNameToSocket[name] + ' from name dict');
     delete mapNameToSocket[name];
+};
+
+/**
+ * Console logger
+ * @param msg String
+ */
+logMessage = function(msg){
+    var time = new Date().today() + ' ' + new Date().timeNow();
+    console.log(time + ' ' + msg);
 };
 
 /**
