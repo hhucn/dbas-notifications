@@ -34,6 +34,8 @@ printHelp = function(){
     console.log('  -lc, --logconsole   enable logging on console')
     console.log('  -lf, --logfile      enable logging in file')
     console.log('')
+    console.log('Without any options, the server will start locally without logging.')
+    console.log('')
     console.log('Author: Tobias Krauthoff <krauthoff@cs.uni-duesseldorf.de>')
 }
 
