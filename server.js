@@ -4,6 +4,7 @@
 const port = 5001;
 const mapIDtoSocket = {};
 const mapNameToSocket = {};
+const version = '0.0.2'
 
 const express = require('express');
 const crypto = require('crypto');
@@ -12,23 +13,84 @@ const http = require('http');
 const url = require('url');
 const fs = require('fs');
 const app = express();
+var log_file = '';
 
 // read params
 var is_global_mode = false;
-if (process.argv.length != 3){
-    console.log('Please set an option: --global (-g), --local (-l)');
-    return;
-} else {
-    if (process.argv[2] == '--global' || process.argv[2] == '-g'){
-        console.log('Start global mode...');
-        is_global_mode = true
-    } else if (process.argv[2] != '--local' && process.argv[2] != '-l'){
-        console.log('Your parameter was incorre.t Please set an option: ---global (-g), --local (-l)');
-        return;
-    } else {
-        console.log('Start local mode...');
-    }
+var is_log_console = false;
+var is_log_file = false;
+var params = []
+
+/*
+ * Print help menu
+ */
+printHelp = function(){
+    console.log('Usage: nodejs server.js [options]');
+    console.log('');
+    console.log('Options:')
+    console.log('  -v,  --version      print version')
+    console.log('  -g,  --global       run on global server with https and certificates')
+    console.log('  -l,  --local        run on local machine with http and no certificates')
+    console.log('  -lc, --logconsole   enable logging on console')
+    console.log('  -lf, --logfile      enable logging in file')
+    console.log('')
+    console.log('Author: Tobias Krauthoff <krauthoff@cs.uni-duesseldorf.de>')
 }
+
+/*
+ * Print error
+ */
+maliciousArgv = function(){
+    console.log('Options are malicious!');
+    console.log('');
+    printHelp();
+}
+
+if (process.argv.indexOf('--help') != -1 || process.argv.indexOf('-h') != -1){
+    printHelp();
+    return;
+}
+
+for (var i = 2; i < process.argv.length; i += 1){
+    should_die = false;
+    switch(process.argv[i]){
+        case '-v' || '--version':
+            break;
+        case '-g' || '--global':
+            is_global_mode = true;
+            break;
+        case '-l' || '--local':
+            if (is_global_mode){
+                maliciousArgv();
+                return;
+            }
+            break;
+        case '-lc' || '--logconsole':
+            is_log_console = true;
+            break;
+        case '-lf' || '--logfile':
+            is_log_file = true;
+            break;
+        default:
+            maliciousArgv();
+            should_die = true;
+    }
+
+    if (should_die)
+        return;
+}
+
+console.log('Start server with options:');
+console.log('');
+console.log('  global:          ' + (is_global_mode ? 'true' : 'false'));
+console.log('  local:           ' + (is_global_mode ? 'false' : 'true'));
+console.log('  log on console:  ' + (is_log_console ? 'true' : 'false'));
+console.log('  log in file:     ' + (is_log_file ? 'true' : 'false'));
+console.log('');
+
+// *********************************************** /
+// *            STARTING SERVER                  * /
+// *********************************************** /
 
 // start with https ot http
 if (is_global_mode){
@@ -86,6 +148,10 @@ io.sockets.on('connection', function(socket){
     });
 });
 
+// *********************************************** /
+// *                  ROUTES                     * /
+// *********************************************** /
+
 // route
 app.get('/publish', function(req, res){
     var params = getDictOfParams(req['url']);
@@ -119,6 +185,10 @@ app.get('/publish', function(req, res){
     }
     res.end();
 });
+
+// *********************************************** /
+// *                 FUNCTIONS                   * /
+// *********************************************** /
 
 /**
  * Add socketid of client to dictionary
@@ -162,8 +232,16 @@ removeNameToSocketId = function(name){
  * @param msg String
  */
 logMessage = function(msg){
-    var time = new Date().today() + ' ' + new Date().timeNow();
-    console.log(time + ' ' + msg);
+    if (is_log_console || is_log_file)
+        var time = new Date().today() + ' ' + new Date().timeNow();
+    if (is_log_console)
+        console.log(time + ' ' + msg);
+    if (is_log_file){
+        if (log_file == ''){
+            log_file = 'serverjs_' + new Date().logNow() + '.log';
+        }
+        fs.appendFile(log_file, time + ' ' + msg + '\n');
+    }
 };
 
 /**
@@ -190,6 +268,10 @@ getDictOfParams = function(url){
     return dict;
 };
 
+// *********************************************** /
+// *                EXTENIONS                    * /
+// *********************************************** /
+
 // Enhance the Date with a today function, which returns DD.MM.YYYY
 Date.prototype.today = function () {
     return ((this.getDate() < 10)?"0":"") + this.getDate() + "."
@@ -202,4 +284,14 @@ Date.prototype.timeNow = function () {
      return ((this.getHours() < 10)?"0":"") + this.getHours() + ":"
         + ((this.getMinutes() < 10)?"0":"") + this.getMinutes() + ":"
         + ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+};
+
+// Enhance the Date with a today function, which returns YYYYMMDD_HHMMSS
+Date.prototype.logNow = function () {
+     return  this.getFullYear()
+         + (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +
+         + ((this.getDate() < 10)?"0":"") + this.getDate() + "_"
+         + ((this.getHours() < 10)?"0":"") + this.getHours() +
+         + ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +
+         + ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
 };
