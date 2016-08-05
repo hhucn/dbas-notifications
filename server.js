@@ -81,9 +81,8 @@ for (var i = 2; i < process.argv.length; i += 1){
 }
 
 console.log('Start server with options:');
-console.log('');
-console.log('  global:          ' + (is_global_mode ? 'true' : 'false'));
-console.log('  local:           ' + (is_global_mode ? 'false' : 'true'));
+console.log('  global mode:     ' + (is_global_mode ? 'true' : 'false'));
+console.log('  local mode:      ' + (is_global_mode ? 'false' : 'true'));
 console.log('  log on console:  ' + (is_log_console ? 'true' : 'false'));
 console.log('  log in file:     ' + (is_log_file ? 'true' : 'false'));
 console.log('');
