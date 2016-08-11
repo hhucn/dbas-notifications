@@ -160,10 +160,16 @@ app.get('/publish', function(req, res){
 
     if (params['type'] == 'notification'){ // notifications
         dict = { 'msg': params['msg'], 'type': 'notifications'}
+
     } else if (params['type'] == 'mention'){ // user was mentioned
-        dict = { 'msg': params['msg'], 'type': 'mention', 'url': params['url']};
+        dict = { 'msg': params['msg'], 'type': params['type'], 'url': params['url']};
+
     } else if (params['type'] == 'edittext'){ // text was edited
-        dict = { 'msg': params['msg'], 'type': 'edittext', 'url': params['url']};
+        dict = { 'msg': params['msg'], 'type': params['type'], 'url': params['url']};
+
+    } else if (params['type'] == 'addtext'){ // text was added
+        dict = { 'msg': params['msg'], 'type': params['type'], 'url': params['url']};
+
     } else { // everything else
         res.writeHead(400);
         res.write('0');
