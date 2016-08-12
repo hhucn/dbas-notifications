@@ -57,7 +57,8 @@ for (var i = 2; i < process.argv.length; i += 1){
     should_die = false;
     switch(process.argv[i]){
         case '-v' || '--version':
-            break;
+            console.log('v0.2.0');
+            return;
         case '-g' || '--global':
             is_global_mode = true;
             break;
@@ -136,16 +137,12 @@ io.sockets.on('connection', function(socket){
     });
 
     // remove on message
-    socket.on('test', function(type){
-        logMessage('Debugging ' + type);
-        if (type == 'success')
-            socket.emit('test', {type: 'success', msg: 'some success message'});
-        else if (type == 'danger')
-            socket.emit('test', {type: 'warning', msg: 'some warning message'});
-        else if (type == 'info')
-            socket.emit('test', {type: 'info', msg: 'some info message'});
-        else
-            socket.emit('test', {type: 'unknown', msg: 'some unknown message'});
+    socket.on('test', function(type, message){
+        logMessage('Debugging ' + type + ' (' + message + ')');
+        if (type == 'success')     socket.emit('test', {type: 'success', msg: message});
+        else if (type == 'danger') socket.emit('test', {type: 'warning', msg: message});
+        else if (type == 'info')   socket.emit('test', {type: 'info', msg: message});
+        else                       socket.emit('test', {type: 'unknown', msg: message});
     });
 });
 
@@ -156,46 +153,42 @@ io.sockets.on('connection', function(socket){
 // route
 app.get('/publish', function(req, res){
     var params = getDictOfParams(req['url']);
-    var dict = ''
 
-    if (params['type'] == 'notification'){ // notifications
-        dict = { 'msg': params['msg'], 'type': 'notifications'}
-
-    } else if (params['type'] == 'mention'){ // user was mentioned
-        dict = { 'msg': params['msg'], 'type': params['type'], 'url': params['url']};
-
-    } else if (params['type'] == 'edittext'){ // text was edited
-        dict = { 'msg': params['msg'], 'type': params['type'], 'url': params['url']};
-
-    } else if (params['type'] == 'addtext'){ // text was added
-        dict = { 'msg': params['msg'], 'type': params['type'], 'url': params['url']};
-
-    } else { // everything else
-        res.writeHead(400);
-        res.write('0');
-        res.end();
+    if (params == ''){
+        writeReponse(res, 400, '0');
+        logMessage('  Empty params!');
+        return;
+    } else if (params['type'] != 'success' || params['type'] != 'info' || params['type'] != 'warning'){
+        writeReponse(res, 400, '0');
         logMessage('  Unknown type: ' + params['type']);
         return;
     }
 
     try {
-        if (dict != ''){
-            var socket_id = mapNameToSocket[params['nickname']];
-            mapIDtoSocket[socket_id].emit('publish', dict);
-            res.writeHead(200);
-            res.write('1');
-        }
+        var socket_id = mapNameToSocket[params['nickname']];
+        mapIDtoSocket[socket_id].emit('publish', params);
+        writeResponse(res, 200, '1');
     } catch (e) {
         logMessage('  No socket for socket_id ' + params['socket_id']);
-        res.writeHead(400);
-        res.write('0');
+        writeReponse(res, 400, '0');
     }
-    res.end();
 });
 
 // *********************************************** /
 // *                 FUNCTIONS                   * /
 // *********************************************** /
+
+/**
+ * Writes statuscode into the head and body into the body of the response
+ * @param response response
+ * @param statuscode int
+ * @param body string
+ */
+writeReponse = function(response, stattuscode, body){
+    response.writeHead(statuscode);
+    response.write(body);
+    response.end();
+}
 
 /**
  * Add socketid of client to dictionary
