@@ -169,7 +169,25 @@ app.get('/publish', function(req, res){
         mapIDtoSocket[socket_id].emit('publish', params);
         writeResponse(res, 200, '1');
     } catch (e) {
-        logMessage('  No socket for socket_id ' + params['socket_id']);
+        logMessage('  No socket for socket_id ' + params['socket_id'] + ': ' + e.message);
+        writeReponse(res, 400, '0');
+    }
+});
+
+app.get('/recent_review', function(req, res){
+    var params = getDictOfParams(req['url']);
+
+    if (params == ''){
+        writeReponse(res, 400, '0');
+        logMessage('  Empty params!');
+        return;
+    }
+
+    try {
+        io.emit('recent_review', params);
+        writeResponse(res, 200, '1');
+    } catch (e) {
+        logMessage('  Could not broadcast: ' + e.message);
         writeReponse(res, 400, '0');
     }
 });
@@ -184,7 +202,7 @@ app.get('/publish', function(req, res){
  * @param statuscode int
  * @param body string
  */
-writeReponse = function(response, stattuscode, body){
+writeResponse = function(response, statuscode, body){
     response.writeHead(statuscode);
     response.write(body);
     response.end();
