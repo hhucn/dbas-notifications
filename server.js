@@ -124,7 +124,7 @@ io.use(function(socket, next){
 io.sockets.on('connection', function(socket){
     // add mapping from socketid to socket
     addIDtoSocket(socket);
-    socket.emit('testid', socket.id)
+    socket.emit('push_socketid', socket.id)
 
     // remove on disconnect
     socket.on('disconnect', function(){
@@ -137,12 +137,12 @@ io.sockets.on('connection', function(socket){
     });
 
     // remove on message
-    socket.on('test', function(type, message){
+    socket.on('push_test', function(type, message){
         logMessage('Debugging ' + type + ' (' + message + ')');
-        if (type == 'success')     socket.emit('test', {type: 'success', msg: message});
-        else if (type == 'danger') socket.emit('test', {type: 'warning', msg: message});
-        else if (type == 'info')   socket.emit('test', {type: 'info', msg: message});
-        else                       socket.emit('test', {type: 'unknown', msg: message});
+        if (type == 'success')     socket.emit('push_test', {type: 'success', msg: message});
+        else if (type == 'danger') socket.emit('push_test', {type: 'warning', msg: message});
+        else if (type == 'info')   socket.emit('push_test', {type: 'info', msg: message});
+        else                       socket.emit('push_test', {type: 'unknown', msg: message});
     });
 });
 
