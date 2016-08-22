@@ -20,9 +20,9 @@ Requirements:
 
 Options:
 ```bash
-  -v,  --version      print version')
-  -g,  --global       run on global server with https and certificates')
-  -l,  --local        run on local machine with http and no certificates')
-  -lc, --logconsole   enable logging on console')
-  -lf, --logfile      enable logging in file')
+  -v,  --version      print version'
+  -g,  --global       run on global server with https and certificates'
+  -l,  --local        run on local machine with http and no certificates'
+  -lc, --logconsole   enable logging on console'
+  -lf, --logfile      enable logging in file'
 ```
