@@ -4,7 +4,7 @@
 const port = 5001;
 const mapIDtoSocket = {};
 const mapNameToSocket = {};
-const version = '0.0.2'
+const version = '0.3.0'
 
 const express = require('express');
 const crypto = require('crypto');
@@ -115,7 +115,9 @@ const io = require('socket.io').listen(server);
 // Read custom data of handshake
 io.use(function(socket, next){
     // add mapping from name to socketid
-    addNameToSocketId(socket.handshake.query.nickname, socket.id)
+    if (addNameToSocketId(socket.handshake.query.nickname, socket.id) == -1){
+        return;
+    }
     return next();
 });
 
@@ -232,8 +234,13 @@ removeIDtoSocket = function(socket_id){
  * @param socketid integer
  */
 addNameToSocketId = function(name, socketid){
+    if (name.length == 0){
+        logMessage('Empty name!');
+        return -1;
+    }
     mapNameToSocket[name] = socketid;
     logMessage('Added ' + name + ':' + socketid + ' into name dict');
+    return 0;
 };
 
 /**
