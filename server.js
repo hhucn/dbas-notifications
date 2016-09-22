@@ -205,7 +205,7 @@ app.get('/recent_review', function(req, res){
  * @param body string
  */
 writeResponse = function(response, statuscode, body){
-    logMessage('  Write response "' + response + '" with ' + statuscode + ' and body ' + body);
+    logMessage('  Write response with ' + statuscode + ' and body ' + body);
     response.writeHead(statuscode);
     response.write(body);
     response.end();
