@@ -205,6 +205,7 @@ app.get('/recent_review', function(req, res){
  * @param body string
  */
 writeResponse = function(response, statuscode, body){
+    logMessage('  Write response "' + response + '" with ' + statuscode + ' and body ' + body);
     response.writeHead(statuscode);
     response.write(body);
     response.end();
@@ -299,9 +300,9 @@ getDictOfParams = function(url){
 
 // Enhance the Date with a today function, which returns DD.MM.YYYY
 Date.prototype.today = function () {
-    return ((this.getDate() < 10)?"0":"") + this.getDate() + "."
+    return this.getFullYear() ((this.getDate() < 10)?"0":"") + this.getDate() + "."
         + (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) + "."
-        + this.getFullYear();
+        + ;
 };
 
 // Enhance the Date with a today function, which returns HH:MM:SS
