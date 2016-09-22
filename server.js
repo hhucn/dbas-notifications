@@ -300,9 +300,9 @@ getDictOfParams = function(url){
 
 // Enhance the Date with a today function, which returns DD.MM.YYYY
 Date.prototype.today = function () {
-    return this.getFullYear() ((this.getDate() < 10)?"0":"") + this.getDate() + "."
+    return ((this.getDate() < 10)?"0":"") + this.getDate() + "."
         + (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) + "."
-        + ;
+        + this.getFullYear();
 };
 
 // Enhance the Date with a today function, which returns HH:MM:SS
