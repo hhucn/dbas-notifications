@@ -4,7 +4,7 @@
 const port = 5001;
 const mapIDtoSocket = {};
 const mapNameToSocket = {};
-const version = '0.3.0'
+const version = '0.3.1'
 
 const express = require('express');
 const crypto = require('crypto');
@@ -84,7 +84,7 @@ for (var i = 2; i < process.argv.length; i += 1){
         return;
 }
 
-console.log('Start server with options:');
+console.log('Start server ' + version ' + with options:');
 console.log('  global mode:     ' + (is_global_mode ? 'true' : 'false'));
 console.log('  local mode:      ' + (is_global_mode ? 'false' : 'true'));
 console.log('  log on console:  ' + (is_log_console ? 'true' : 'false'));
