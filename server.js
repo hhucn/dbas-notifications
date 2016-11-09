@@ -107,13 +107,12 @@ if (is_global_mode){
         key:   fs.readFileSync('privkey.pem')
     };
     //const credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
-    console.log('a');
     var server = https.createServer(options, app).listen(app.get('port'), function(){
-        console.log("Express server " + version + " listening on port with https " + app.get('port'));
+        console.log('v' + version + ': Express server listening with https on port ' + app.get('port'));
     });
 } else {
     var server = http.createServer(app).listen(app.get('port'), function(){
-        console.log("Express server " + version + " listening on port with http " + app.get('port'));
+        console.log('v' + version + ': Express server listening with http on port ' + app.get('port'));
     });
 }
 const io = require('socket.io').listen(server);
