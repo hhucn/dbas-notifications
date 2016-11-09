@@ -96,7 +96,9 @@ console.log('');
 // *********************************************** /
 
 // start with https ot http
+console.log('d');
 if (is_global_mode){
+    console.log('c');
     const options = {
         // Chain and key will be copied by /usr/local/sbin/le-renew-webroot
         //key:   fs.readFileSync('/etc/nginx/ssl/server.key'),
@@ -108,11 +110,13 @@ if (is_global_mode){
     };
     //const credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
     // var server = https.createServer(options, app).listen(port);
+    console.log('a');
     var server = https.createServer(options, app).listen(app.get('port'), function(){
         console.log("Express server " + version + " listening on port with https " + app.get('port'));
     });
+    console.log('b');
 } else {
-    var server = http.createServer(app, app).listen(app.get('port'), function(){
+    var server = http.createServer(app).listen(app.get('port'), function(){
         console.log("Express server " + version + " listening on port with http " + app.get('port'));
     });
 }
