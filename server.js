@@ -13,6 +13,7 @@ const http = require('http');
 const url = require('url');
 const fs = require('fs');
 const app = express();
+app.set('port', port);
 var log_file = '';
 
 // read params
@@ -107,11 +108,13 @@ if (is_global_mode){
     };
     //const credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
     // var server = https.createServer(options, app).listen(port);
-    var server = https.createServer(options,app).listen(app.get('port'), function(){
+    var server = https.createServer(options, app).listen(app.get('port'), function(){
         console.log("Express server listening on port with https " + app.get('port'));
     });
 } else {
-    var server = http.createServer(app).listen(port);
+    var server = http.createServer(app, app).listen(app.get('port'), function(){
+        console.log("Express server listening on port with http " + app.get('port'));
+    });
 }
 const io = require('socket.io').listen(server);
 
