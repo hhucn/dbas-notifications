@@ -106,7 +106,10 @@ if (is_global_mode){
         key:   fs.readFileSync('privkey.pem')
     };
     //const credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
-    var server = https.createServer(options, app).listen(port);
+    // var server = https.createServer(options, app).listen(port);
+    var server = https.createServer(options,app).listen(app.get('port'), function(){
+        console.log("Express server listening on port with https " + app.get('port'));
+    });
 } else {
     var server = http.createServer(app).listen(port);
 }
