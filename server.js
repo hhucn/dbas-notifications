@@ -4,7 +4,7 @@
 const port = 5001;
 const mapIDtoSocket = {};
 const mapNameToSocket = {};
-const version = '0.3.1'
+const version = '0.3.2'
 
 const express = require('express');
 const crypto = require('crypto');
@@ -85,10 +85,8 @@ for (var i = 2; i < process.argv.length; i += 1){
 }
 
 console.log('Start server ' + version + ' with options:');
-console.log('  global mode:     ' + (is_global_mode ? 'true' : 'false'));
-console.log('  local mode:      ' + (is_global_mode ? 'false' : 'true'));
-console.log('  log on console:  ' + (is_log_console ? 'true' : 'false'));
-console.log('  log in file:     ' + (is_log_file ? 'true' : 'false'));
+console.log('  mode: ' + (is_global_mode ? 'global' : 'local'));
+console.log('  log:  ' + (is_log_console ? (is_log_file ? 'console, file' : 'console') : is_log_file ? 'file' : ''));
 console.log('');
 
 // *********************************************** /
@@ -108,11 +106,11 @@ if (is_global_mode){
     };
     //const credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
     var server = https.createServer(options, app).listen(app.get('port'), function(){
-        console.log('v' + version + ': Express server listening with https on port ' + app.get('port'));
+        console.log('Express server listening with https on port ' + app.get('port'));
     });
 } else {
     var server = http.createServer(app).listen(app.get('port'), function(){
-        console.log('v' + version + ': Express server listening with http on port ' + app.get('port'));
+        console.log('Express server listening with http on port ' + app.get('port'));
     });
 }
 const io = require('socket.io').listen(server);
