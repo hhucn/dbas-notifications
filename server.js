@@ -4,7 +4,7 @@
 const port = 5100;
 const mapIDtoSocket = {};
 const mapNameToSocket = {};
-const version = '0.3.3'
+const version = '0.3.4'
 
 const express = require('express');
 const crypto = require('crypto');
@@ -144,10 +144,14 @@ io.sockets.on('connection', function(socket){
     // remove on message
     socket.on('push_test', function(type, message){
         logMessage('Debugging ' + type + ' (' + message + ')');
-        if (type == 'success')     socket.emit('push_test', {type: 'success', msg: message});
-        else if (type == 'danger') socket.emit('push_test', {type: 'warning', msg: message});
-        else if (type == 'info')   socket.emit('push_test', {type: 'info', msg: message});
-        else                       socket.emit('push_test', {type: 'unknown', msg: message});
+        if (type == 'success')
+            socket.emit('push_test', {type: 'success', msg: message});
+        else if (type == 'danger')
+            socket.emit('push_test', {type: 'warning', msg: message});
+        else if (type == 'info')
+            socket.emit('push_test', {type: 'info', msg: message});
+        else
+            socket.emit('push_test', {type: 'unknown', msg: message});
     });
 });
 
@@ -160,12 +164,14 @@ app.get('/publish', function(req, res){
     var params = getDictOfParams(req['url']);
 
     if (params == ''){
-        writeReponse(res, 400, '0');
+        writeResponse(res, 400, '0');
         logMessage('  Empty params!');
         return;
-    } else if (params['type'] != 'success' || params['type'] != 'info' || params['type'] != 'warning'){
-        writeReponse(res, 400, '0');
-        logMessage('  Unknown type: ' + params['type']);
+    } else if (params['type'] != 'success' &&
+            params['type'] != 'info' &&
+            params['type'] != 'warning'){
+        writeResponse(res, 400, '0');
+        logMessage('  Unknown type: \'' + params['type'] + '\'');
         return;
     }
 
@@ -175,7 +181,7 @@ app.get('/publish', function(req, res){
         writeResponse(res, 200, '1');
     } catch (e) {
         logMessage('  No socket for socket_id ' + params['socket_id'] + ': ' + e.message);
-        writeReponse(res, 400, '0');
+        writeResponse(res, 400, '0');
     }
 });
 
@@ -183,7 +189,7 @@ app.get('/recent_review', function(req, res){
     var params = getDictOfParams(req['url']);
 
     if (params == ''){
-        writeReponse(res, 400, '0');
+        writeResponse(res, 400, '0');
         logMessage('  Empty params!');
         return;
     }
@@ -193,7 +199,7 @@ app.get('/recent_review', function(req, res){
         writeResponse(res, 200, '1');
     } catch (e) {
         logMessage('  Could not broadcast: ' + e.message);
-        writeReponse(res, 400, '0');
+        writeResponse(res, 400, '0');
     }
 });
 
