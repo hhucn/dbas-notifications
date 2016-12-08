@@ -1,7 +1,7 @@
 // Node.JS server with socket.io plugin for bidirectional event-based communcation
 // Tobias Krauthoff <krauthoff@cs.uni-duesseldorf.de>
 
-const port = 5100;
+const port = 6667;
 const mapIDtoSocket = {};
 const mapNameToSocket = {};
 const version = '0.3.4'
