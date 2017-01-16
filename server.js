@@ -1,10 +1,10 @@
 // Node.JS server with socket.io plugin for bidirectional event-based communcation
 // Tobias Krauthoff <krauthoff@cs.uni-duesseldorf.de>
 
-const port = 5100;
+const port = 5222;
 const mapIDtoSocket = {};
 const mapNameToSocket = {};
-const version = '0.3.4'
+const version = '0.3.5'
 
 const express = require('express');
 const crypto = require('crypto');
@@ -117,8 +117,10 @@ const io = require('socket.io').listen(server);
 
 // Read custom data of handshake
 io.use(function(socket, next){
+    logMessage('New connection from ' + socket.request.connection.remoteAddress + ' (socket.request.connection.remoteAddress)');
+    logMessage('New connection from ' + socket.handshake.address + ' (socket.handshake.address)');
     // add mapping from name to socketid
-    if (addNameToSocketId(socket.handshake.query.nickname, socket.id) == -1){
+    if (addNameToSocketId(socket) == -1){
         return;
     }
     return next();
@@ -176,7 +178,7 @@ app.get('/publish', function(req, res){
     }
 
     try {
-        var socket_id = mapNameToSocket[params['nickname']];
+        const socket_id = mapNameToSocket[params['nickname']];
         mapIDtoSocket[socket_id].emit('publish', params);
         writeResponse(res, 200, '1');
     } catch (e) {
@@ -186,7 +188,7 @@ app.get('/publish', function(req, res){
 });
 
 app.get('/recent_review', function(req, res){
-    var params = getDictOfParams(req['url']);
+    const params = getDictOfParams(req['url']);
 
     if (params == ''){
         writeResponse(res, 400, '0');
@@ -243,7 +245,9 @@ removeIDtoSocket = function(socket_id){
  * @param name String
  * @param socketid integer
  */
-addNameToSocketId = function(name, socketid){
+addNameToSocketId = function(socket){
+    const name = socket.handshake.query.nickname;
+    const socketid = socket.id;
     if (name.length == 0){
         logMessage('Empty name!');
         return -1;
@@ -268,7 +272,7 @@ removeNameToSocketId = function(name){
  */
 logMessage = function(msg){
     if (is_log_console || is_log_file)
-        var time = new Date().today() + ' ' + new Date().timeNow();
+        const time = new Date().today() + ' ' + new Date().timeNow();
     if (is_log_console)
         console.log(time + ' ' + msg);
     if (is_log_file){
@@ -286,8 +290,8 @@ logMessage = function(msg){
  */
 getDictOfParams = function(url){
     logMessage(url);
-    var param = url.substr(url.indexOf('?')+1);
-    var params = param.split('&');
+    const param = url.substr(url.indexOf('?')+1);
+    const params = param.split('&');
     var dict = {};
     var split = '';
     params.forEach(function(entry) {

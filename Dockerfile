@@ -8,5 +8,5 @@ ADD . /code
 
 RUN npm install
 
-EXPOSE 5001
-CMD nodejs server.js -l
+EXPOSE 5222
+CMD nodejs server.js -l -lc
