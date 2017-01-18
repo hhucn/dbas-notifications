@@ -1,18 +1,18 @@
 // Node.JS server with socket.io plugin for bidirectional event-based communcation
 // Tobias Krauthoff <krauthoff@cs.uni-duesseldorf.de>
 
-const port = 5222;
-const mapIDtoSocket = {};
-const mapNameToSocket = {};
-const version = '0.3.5'
+var port = 5222;
+var mapIDtoSocket = {};
+var mapNameToSocket = {};
+var version = '0.3.5'
 
-const express = require('express');
-const crypto = require('crypto');
-const https = require('https');
-const http = require('http');
-const url = require('url');
-const fs = require('fs');
-const app = express();
+var express = require('express');
+var crypto = require('crypto');
+var https = require('https');
+var http = require('http');
+var url = require('url');
+var fs = require('fs');
+var app = express();
 app.set('port', port);
 var log_file = '';
 
@@ -95,7 +95,7 @@ console.log('');
 
 // start with https ot http
 if (is_global_mode){
-    const options = {
+    var options = {
         // Chain and key will be copied by /usr/local/sbin/le-renew-webroot
         //key:   fs.readFileSync('/etc/nginx/ssl/server.key'),
         //cert:  fs.readFileSync('/etc/nginx/ssl/server.crt'),
@@ -104,7 +104,7 @@ if (is_global_mode){
         cert:  fs.readFileSync('fullchain.pem'),
         key:   fs.readFileSync('privkey.pem')
     };
-    //const credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
+    //var credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
     var server = https.createServer(options, app).listen(app.get('port'), function(){
         console.log('Express server listening with https on port ' + app.get('port'));
     });
@@ -113,7 +113,7 @@ if (is_global_mode){
         console.log('Express server listening with http on port ' + app.get('port'));
     });
 }
-const io = require('socket.io').listen(server);
+var io = require('socket.io').listen(server);
 
 // Read custom data of handshake
 io.use(function(socket, next){
@@ -178,7 +178,7 @@ app.get('/publish', function(req, res){
     }
 
     try {
-        const socket_id = mapNameToSocket[params['nickname']];
+        var socket_id = mapNameToSocket[params['nickname']];
         mapIDtoSocket[socket_id].emit('publish', params);
         writeResponse(res, 200, '1');
     } catch (e) {
@@ -188,7 +188,7 @@ app.get('/publish', function(req, res){
 });
 
 app.get('/recent_review', function(req, res){
-    const params = getDictOfParams(req['url']);
+    var params = getDictOfParams(req['url']);
 
     if (params == ''){
         writeResponse(res, 400, '0');
@@ -246,8 +246,8 @@ removeIDtoSocket = function(socket_id){
  * @param socketid integer
  */
 addNameToSocketId = function(socket){
-    const name = socket.handshake.query.nickname;
-    const socketid = socket.id;
+    var name = socket.handshake.query.nickname;
+    var socketid = socket.id;
     if (name.length == 0){
         logMessage('Empty name!');
         return -1;
@@ -272,7 +272,7 @@ removeNameToSocketId = function(name){
  */
 logMessage = function(msg){
     if (is_log_console || is_log_file)
-        const time = new Date().today() + ' ' + new Date().timeNow();
+        var time = new Date().today() + ' ' + new Date().timeNow();
     if (is_log_console)
         console.log(time + ' ' + msg);
     if (is_log_file){
@@ -290,8 +290,8 @@ logMessage = function(msg){
  */
 getDictOfParams = function(url){
     logMessage(url);
-    const param = url.substr(url.indexOf('?')+1);
-    const params = param.split('&');
+    var param = url.substr(url.indexOf('?')+1);
+    var params = param.split('&');
     var dict = {};
     var split = '';
     params.forEach(function(entry) {
