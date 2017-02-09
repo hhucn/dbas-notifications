@@ -15,6 +15,7 @@ var fs = require('fs');
 var app = express();
 app.set('port', port);
 var log_file = '';
+var path = '';
 
 // read params
 var is_global_mode = false;
@@ -34,6 +35,7 @@ printHelp = function(){
     console.log('  -l,  --local        run on local machine with http and no certificates')
     console.log('  -lc, --logconsole   enable logging on console')
     console.log('  -lf, --logfile      enable logging in file')
+    console.log('  -p,  --path         path of the fullchain')
     console.log('')
     console.log('Without any options, the server will start locally without logging.')
     console.log('')
@@ -75,6 +77,10 @@ for (var i = 2; i < process.argv.length; i += 1){
         case '-lf' || '--logfile':
             is_log_file = true;
             break;
+        case '-p' || '--path':
+            path = process.argv[i+1];
+            i+=1;
+            break;
         default:
             maliciousArgv();
             should_die = true;
@@ -87,6 +93,7 @@ for (var i = 2; i < process.argv.length; i += 1){
 console.log('Start server ' + version + ' with options:');
 console.log('  mode: ' + (is_global_mode ? 'global' : 'local'));
 console.log('  log:  ' + (is_log_console ? (is_log_file ? 'console, file' : 'console') : is_log_file ? 'file' : 'none'));
+console.log('  path: ' + '\'' + path + '\'');
 console.log('');
 
 // *********************************************** /
@@ -101,8 +108,8 @@ if (is_global_mode){
         //cert:  fs.readFileSync('/etc/nginx/ssl/server.crt'),
         //pfx:   fs.readFileSync('mycert.pfx'),
         //passphrase: 'sOmE_PassW0rd',
-        cert:  fs.readFileSync('fullchain.pem'),
-        key:   fs.readFileSync('privkey.pem')
+        cert:  fs.readFileSync(path + 'fullchain.pem'),
+        key:   fs.readFileSync(path + 'privkey.pem')
     };
     //var credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
     var server = https.createServer(options, app).listen(app.get('port'), function(){
