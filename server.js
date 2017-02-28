@@ -14,7 +14,7 @@ var url = require('url');
 var fs = require('fs');
 var app = express();
 app.set('port', port);
-var log_file = '';
+var log_file = 'log/';
 var path = '';
 
 // read params
