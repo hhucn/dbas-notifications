@@ -35,7 +35,7 @@ printHelp = function(){
     console.log('  -l,  --local        run on local machine with http and no certificates')
     console.log('  -lc, --logconsole   enable logging on console')
     console.log('  -lf, --logfile      enable logging in file')
-    console.log('  -p,  --path         path of the fullchain')
+    console.log('  -p,  --path         path of fullchain.pem and priveky.pem')
     console.log('')
     console.log('Without any options, the server will start locally without logging.')
     console.log('')
