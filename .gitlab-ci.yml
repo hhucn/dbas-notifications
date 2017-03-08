@@ -1,8 +1,12 @@
-image: node:6
-
-before_script:
-  - node --version
-
 build_image:
+  image: docker:git
+  services:
+    - docker:dind
   script:
-    - npm install
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE .
+    - docker run --rm -p 5222:5222 $CI_REGISTRY_IMAGE
+    - curl --retry 10 --retry-delay 5 -v http://localhost:5222
+    - docker push $CI_REGISTRY_IMAGE
+#  only:
+#    - master
