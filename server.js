@@ -14,7 +14,6 @@ var url = require('url');
 var fs = require('fs');
 var app = express();
 app.set('port', port);
-var log_file = 'log/';
 var path = '';
 
 // read params
@@ -283,10 +282,8 @@ logMessage = function(msg){
     if (is_log_console)
         console.log(time + ' ' + msg);
     if (is_log_file){
-        if (log_file == ''){
-            log_file = 'serverjs_' + new Date().logNow() + '.log';
-        }
-        fs.appendFile(log_file, time + ' ' + msg + '\n');
+        var path_for_log = 'log/' + new Date().logNow() + '.log';
+        fs.appendFile(path_for_log, time + ' ' + msg + '\n');
     }
 };
 
