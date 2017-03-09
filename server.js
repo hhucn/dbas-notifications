@@ -12,6 +12,7 @@ var https = require('https');
 var http = require('http');
 var url = require('url');
 var fs = require('fs');
+var touch = require('touch');
 var app = express();
 app.set('port', port);
 var path = '';
@@ -282,7 +283,8 @@ logMessage = function(msg){
     if (is_log_console)
         console.log(time + ' ' + msg);
     if (is_log_file){
-        var path_for_log = 'log/' + new Date().logNow() + '.log';
+        var path_for_log = 'log/server_' + new Date().todayForLog() + '.log';
+        touch(path_for_log)
         fs.appendFile(path_for_log, time + ' ' + msg + '\n');
     }
 };
@@ -320,6 +322,12 @@ Date.prototype.today = function () {
     return ((this.getDate() < 10)?"0":"") + this.getDate() + "."
         + (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) + "."
         + this.getFullYear();
+};
+
+Date.prototype.todayForLog = function () {
+    return this.getFullYear() +
+        + (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +
+        + ((this.getDate() < 10)?"0":"") + this.getDate();
 };
 
 // Enhance the Date with a today function, which returns HH:MM:SS
