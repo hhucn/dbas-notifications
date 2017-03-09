@@ -102,15 +102,21 @@ console.log('');
 
 // start with https ot http
 if (is_global_mode){
-    var options = {
-        // Chain and key will be copied by /usr/local/sbin/le-renew-webroot
-        //key:   fs.readFileSync('/etc/nginx/ssl/server.key'),
-        //cert:  fs.readFileSync('/etc/nginx/ssl/server.crt'),
-        //pfx:   fs.readFileSync('mycert.pfx'),
-        //passphrase: 'sOmE_PassW0rd',
-        cert:  fs.readFileSync(path + 'fullchain.pem'),
-        key:   fs.readFileSync(path + 'privkey.pem')
-    };
+    var options = {};
+    try{
+        var options = {
+            // Chain and key will be copied by /usr/local/sbin/le-renew-webroot
+            //key:   fs.readFileSync('/etc/nginx/ssl/server.key'),
+            //cert:  fs.readFileSync('/etc/nginx/ssl/server.crt'),
+            //pfx:   fs.readFileSync('mycert.pfx'),
+            //passphrase: 'sOmE_PassW0rd',
+            cert:  fs.readFileSync(path + 'fullchain.pem'),
+            key:   fs.readFileSync(path + 'privkey.pem')
+        };
+    } catch (err) {
+        console.log('ERROR: Certificates could not be found!');
+        console.log('       Starting without certificates!')
+    }
     //var credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
     var server = https.createServer(options, app).listen(app.get('port'), function(){
         console.log('Express server listening with https on port ' + app.get('port'));
