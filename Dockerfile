@@ -11,5 +11,4 @@ ADD . /code
 RUN npm install
 
 EXPOSE 5222
-# CMD ["node", "server.js", "-l", "-lc
-CMD ["node", "server.js", "-g", "-lc", "-lf", "-p", "/cert/live/dbas.cs.uni-duesseldorf.de/"]
+CMD ["node", "server.js", "-l", "-lc"]
