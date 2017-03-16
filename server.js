@@ -106,10 +106,6 @@ if (is_global_mode){
     try{
         var options = {
             // Chain and key will be copied by /usr/local/sbin/le-renew-webroot
-            //key:   fs.readFileSync('/etc/nginx/ssl/server.key'),
-            //cert:  fs.readFileSync('/etc/nginx/ssl/server.crt'),
-            //pfx:   fs.readFileSync('mycert.pfx'),
-            //passphrase: 'sOmE_PassW0rd',
             cert:  fs.readFileSync(path + 'fullchain.pem'),
             key:   fs.readFileSync(path + 'privkey.pem')
         };
