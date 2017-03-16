@@ -60,7 +60,7 @@ for (var i = 2; i < process.argv.length; i += 1){
     should_die = false;
     switch(process.argv[i]){
         case '-v' || '--version':
-            console.log('v0.2.0');
+            console.log(version);
             return;
         case '-g' || '--global':
             is_global_mode = true;
