@@ -3,9 +3,8 @@ MAINTAINER Christian Meter <meter@cs.uni-duesseldorf.de>, Tobias Krauthoff <krau
 
 RUN apk add --update nodejs
 
-RUN mkdir /code
+RUN mkdir -p /code/log
 WORKDIR /code
-RUN mkdir log
 
 ADD . /code
 
