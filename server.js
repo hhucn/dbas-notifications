@@ -111,14 +111,16 @@ if (is_global_mode){
             cert:  fs.readFileSync(path + 'fullchain.pem'),
             key:   fs.readFileSync(path + 'privkey.pem')
         };
+        var server = https.createServer(options, app).listen(app.get('port'), function(){
+            console.log('Express server listening with https on port ' + app.get('port'));
+        });
     } catch (err) {
         console.log('ERROR: Certificates could not be found!');
-        console.log('       Starting without certificates!')
+        console.log('       Starting without certificates and without https!')
+        var server = http.createServer(app).listen(app.get('port'), function(){
+            console.log('Express server listening with http on port ' + app.get('port'));
+        });
     }
-    //var credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
-    var server = https.createServer(options, app).listen(app.get('port'), function(){
-        console.log('Express server listening with https on port ' + app.get('port'));
-    });
 } else {
     var server = http.createServer(app).listen(app.get('port'), function(){
         console.log('Express server listening with http on port ' + app.get('port'));

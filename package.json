@@ -1,6 +1,6 @@
 {
   "name": "dbas-notifications",
-  "version": "0.3.3",
+  "version": "0.3.6",
   "description": "Notification system for D-BAS",
   "dependencies": {
     "crypto": "0.0.3",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.cs.uni-duesseldorf.de:project/dbas-notifications.git"
+    "url": "git@gitlab.cs.uni-duesseldorf.de:dbas/notifications.git"
   },
   "license": "MIT"
 }
