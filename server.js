@@ -46,7 +46,9 @@ printHelp = function(){
  * Print error
  */
 maliciousArgv = function(){
-    console.log('Options are malicious!');
+    process.argv.shift(); // rm /usr/bin/nodejs call
+    process.argv.shift(); // rm server.js call
+    console.log('Options are malicious: ' + process.argv);
     console.log('');
     printHelp();
 }
@@ -67,7 +69,7 @@ for (var i = 2; i < process.argv.length; i += 1){
             break;
         case '-l' || '--local':
             if (is_global_mode){
-                maliciousArgv();
+                maliciousArgv(process.argv);
                 return;
             }
             break;
@@ -82,7 +84,7 @@ for (var i = 2; i < process.argv.length; i += 1){
             i+=1;
             break;
         default:
-            maliciousArgv();
+            maliciousArgv(process.argv);
             should_die = true;
     }
 
