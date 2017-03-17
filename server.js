@@ -1,6 +1,8 @@
 // Node.JS server with socket.io plugin for bidirectional event-based communcation
 // Tobias Krauthoff <krauthoff@cs.uni-duesseldorf.de>
 
+// This server will run behind an reverse proxy. Therefore we do not need any secure http connections
+
 var port = 5222;
 var mapIDtoSocket = {};
 var mapNameToSocket = {};
@@ -8,17 +10,14 @@ var version = '0.3.5'
 
 var express = require('express');
 var crypto = require('crypto');
-var https = require('https');
 var http = require('http');
 var url = require('url');
 var fs = require('fs');
 var touch = require('touch');
 var app = express();
 app.set('port', port);
-var path = '';
 
 // read params
-var is_global_mode = false;
 var is_log_console = false;
 var is_log_file = false;
 var params = []
@@ -31,13 +30,8 @@ printHelp = function(){
     console.log('');
     console.log('Options:')
     console.log('  -v,  --version      print version')
-    console.log('  -g,  --global       run on global server with https and certificates')
-    console.log('  -l,  --local        run on local machine with http and no certificates')
     console.log('  -lc, --logconsole   enable logging on console')
     console.log('  -lf, --logfile      enable logging in file')
-    console.log('  -p,  --path         path of fullchain.pem and priveky.pem')
-    console.log('')
-    console.log('Without any options, the server will start locally without logging.')
     console.log('')
     console.log('Author: Tobias Krauthoff <krauthoff@cs.uni-duesseldorf.de>')
 }
@@ -62,24 +56,11 @@ for (var i = 2; i < process.argv.length; i += 1){
         case '-v' || '--version':
             console.log(version);
             return;
-        case '-g' || '--global':
-            is_global_mode = true;
-            break;
-        case '-l' || '--local':
-            if (is_global_mode){
-                maliciousArgv();
-                return;
-            }
-            break;
         case '-lc' || '--logconsole':
             is_log_console = true;
             break;
         case '-lf' || '--logfile':
             is_log_file = true;
-            break;
-        case '-p' || '--path':
-            path = process.argv[i+1];
-            i+=1;
             break;
         default:
             maliciousArgv();
@@ -91,37 +72,17 @@ for (var i = 2; i < process.argv.length; i += 1){
 }
 
 console.log('Start server ' + version + ' with options:');
-console.log('  mode: ' + (is_global_mode ? 'global' : 'local'));
 console.log('  log:  ' + (is_log_console ? (is_log_file ? 'console, file' : 'console') : is_log_file ? 'file' : 'none'));
-console.log('  path: ' + '\'' + path + '\'');
 console.log('');
 
 // *********************************************** /
 // *            STARTING SERVER                  * /
 // *********************************************** /
 
-// start with https ot http
-if (is_global_mode){
-    var options = {};
-    try{
-        var options = {
-            // Chain and key will be copied by /usr/local/sbin/le-renew-webroot
-            cert:  fs.readFileSync(path + 'fullchain.pem'),
-            key:   fs.readFileSync(path + 'privkey.pem')
-        };
-    } catch (err) {
-        console.log('ERROR: Certificates could not be found!');
-        console.log('       Starting without certificates!')
-    }
-    //var credentials = crypto.createCredentials({key: options['key'], cert: options['cert']});
-    var server = https.createServer(options, app).listen(app.get('port'), function(){
-        console.log('Express server listening with https on port ' + app.get('port'));
-    });
-} else {
-    var server = http.createServer(app).listen(app.get('port'), function(){
-        console.log('Express server listening with http on port ' + app.get('port'));
-    });
-}
+// start with http
+var server = http.createServer(app).listen(app.get('port'), function(){
+    console.log('Express server listening with http on port ' + app.get('port'));
+});
 var io = require('socket.io').listen(server);
 
 // Read custom data of handshake

@@ -11,4 +11,4 @@ ADD . /code
 RUN npm install
 
 EXPOSE 5222
-CMD ["node", "server.js", "-l", "-lc"]
+CMD ["node", "server.js", "-l", "-lc", "-lf"]
