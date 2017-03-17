@@ -20,7 +20,8 @@ Requirements:
 
 Options:
 ```bash
-  -v,  --version      print version'
-  -lc, --logconsole   enable logging on console'
-  -lf, --logfile      enable logging in file'
+  -v,  --version      print version
+  -lc, --logconsole   enable logging on console
+  -lf, --logfile      enable logging in file
+  -p,  --path         path for the certificates
 ```
