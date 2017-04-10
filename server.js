@@ -4,7 +4,7 @@
 var port = 5222;
 var mapIDtoSocket = {};
 var mapNameToSocket = {};
-var version = '0.3.5'
+var version = '0.3.6'
 
 var express = require('express');
 var crypto = require('crypto');
