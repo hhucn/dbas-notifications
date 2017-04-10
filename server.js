@@ -126,7 +126,7 @@ if (is_global_mode){
         console.log('Express server listening with http on port ' + app.get('port'));
     });
 }
-var io = require('socket.io').listen(server).set('transports', ['websocket']);
+var io = require('socket.io').listen(server); //.set('transports', ['websocket']);
 
 // Read custom data of handshake
 io.use(function(socket, next){
