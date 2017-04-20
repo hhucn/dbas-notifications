@@ -4,7 +4,7 @@
 var port = 5222;
 var mapIDtoSocket = {};
 var mapNameToSocket = {};
-var version = '0.3.7'
+var version = '0.3.8'
 
 var express = require('express');
 var crypto = require('crypto');
@@ -210,6 +210,7 @@ app.get('/recent_review', function(req, res){
     }
 
     try {
+        var socket_id = mapNameToSocket[params['reviewer_name']];
         mapIDtoSocket[socket_id].emit('recent_review', params);
         writeResponse(res, 200, '1');
     } catch (e) {
