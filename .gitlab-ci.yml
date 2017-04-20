@@ -1,4 +1,13 @@
+image: docker
+
+stages:
+  - build
+  - test
+  - deploy
+  - cleanup
+
 build_image:
+  stage: build
   image: docker:git
   services:
     - docker:dind
@@ -8,3 +17,11 @@ build_image:
     - docker push $CI_REGISTRY_IMAGE
   only:
     - master
+
+jshint:
+  stage: test
+  script:
+    - apk add --no-cache nodejs bash
+    - npm install -g jshint
+    - bash -c "jshint server.js"
+  allow_failure: true
