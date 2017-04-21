@@ -7,10 +7,8 @@ var mapNameToSocket = {};
 var version = '0.3.8';
 
 var express = require('express');
-var crypto = require('crypto');
 var https = require('https');
 var http = require('http');
-var url = require('url');
 var fs = require('fs');
 var touch = require('touch');
 var app = express();
@@ -21,7 +19,6 @@ var path = '';
 var is_global_mode = false;
 var is_log_console = false;
 var is_log_file = false;
-var params = [];
 
 /*
  * Print help menu
@@ -302,7 +299,7 @@ removeNameToSocketId = function(name){
  */
 logMessage = function(msg){
     "use strict";
-    var tiem = '';
+    var time = '';
     if (is_log_console || is_log_file) {
         time = new Date().today() + ' ' + new Date().timeNow();
     }

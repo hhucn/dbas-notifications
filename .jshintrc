@@ -86,13 +86,8 @@
     "wsh"           : false,    // Windows Scripting Host
     "yui"           : false,    // Yahoo User Interface
 
-    "-W030"         : true,
-    "-W049"         : true,     // unexpected escaped char
-    "-W066"         : true,
-    "-W083"         : true,     // don't make function in loops
-    "-W098"         : true,     // x is defined, but not used
     "-W117"         : true,     // x is not defined
-    "-W121"         : true,     // x is not defined
+    "-W121"         : true,     // Extending prototype
 
     // Custom Globals
     "globals"       : {         // additional predefined global variables
