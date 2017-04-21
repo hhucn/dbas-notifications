@@ -4,7 +4,7 @@
 var port = 5222;
 var mapIDtoSocket = {};
 var mapNameToSocket = {};
-var version = '0.3.8'
+var version = '0.3.8';
 
 var express = require('express');
 var crypto = require('crypto');
@@ -21,39 +21,41 @@ var path = '';
 var is_global_mode = false;
 var is_log_console = false;
 var is_log_file = false;
-var params = []
+var params = [];
 
 /*
  * Print help menu
  */
 printHelp = function(){
+    "use strict";
     console.log('Usage: nodejs server.js [options]');
     console.log('');
-    console.log('Options:')
-    console.log('  -v,  --version      print version')
-    console.log('  -g,  --global       run on global server with https and certificates')
-    console.log('  -l,  --local        run on local machine with http and no certificates')
-    console.log('  -lc, --logconsole   enable logging on console')
-    console.log('  -lf, --logfile      enable logging in file')
-    console.log('  -p,  --path         path of fullchain.pem and priveky.pem')
-    console.log('')
-    console.log('Without any options, the server will start locally without logging.')
-    console.log('')
-    console.log('Author: Tobias Krauthoff <krauthoff@cs.uni-duesseldorf.de>')
-}
+    console.log('Options:');
+    console.log('  -v,  --version      print version');
+    console.log('  -g,  --global       run on global server with https and certificates');
+    console.log('  -l,  --local        run on local machine with http and no certificates');
+    console.log('  -lc, --logconsole   enable logging on console');
+    console.log('  -lf, --logfile      enable logging in file');
+    console.log('  -p,  --path         path of fullchain.pem and priveky.pem');
+    console.log('');
+    console.log('Without any options, the server will start locally without logging.');
+    console.log('');
+    console.log('Author: Tobias Krauthoff <krauthoff@cs.uni-duesseldorf.de>');
+};
 
 /*
  * Print error
  */
 maliciousArgv = function(){
+    "use strict";
     process.argv.shift(); // rm /usr/bin/nodejs call
     process.argv.shift(); // rm server.js call
     console.log('Options are malicious: ' + process.argv);
     console.log('');
     printHelp();
-}
+};
 
-if (process.argv.indexOf('--help') != -1 || process.argv.indexOf('-h') != -1){
+if (process.argv.indexOf('--help') !== -1 || process.argv.indexOf('-h') !== -1){
     printHelp();
     return;
 }
@@ -88,8 +90,9 @@ for (var i = 2; i < process.argv.length; i += 1){
             should_die = true;
     }
 
-    if (should_die)
+    if (should_die){
         return;
+    }
 }
 
 console.log('Start server ' + version + ' with options:');
@@ -112,17 +115,20 @@ if (is_global_mode){
             key:   fs.readFileSync(path + 'privkey.pem')
         };
         var server = https.createServer(options, app).listen(app.get('port'), function(){
+            "use strict";
             console.log('Express server listening with https on port ' + app.get('port'));
         });
     } catch (err) {
         console.log('ERROR: Certificates could not be found!');
-        console.log('       Starting without certificates and without https!')
+        console.log('       Starting without certificates and without https!');
         var server = http.createServer(app).listen(app.get('port'), function(){
+            "use strict";
             console.log('Express server listening with http on port ' + app.get('port'));
         });
     }
 } else {
     var server = http.createServer(app).listen(app.get('port'), function(){
+        "use strict";
         console.log('Express server listening with http on port ' + app.get('port'));
     });
 }
@@ -130,10 +136,11 @@ var io = require('socket.io').listen(server); //.set('transports', ['websocket']
 
 // Read custom data of handshake
 io.use(function(socket, next){
+    "use strict";
     logMessage('New connection from ' + socket.request.connection.remoteAddress + ' (socket.request.connection.remoteAddress)');
     logMessage('New connection from ' + socket.handshake.address + ' (socket.handshake.address)');
     // add mapping from name to socketid
-    if (addNameToSocketId(socket) == -1){
+    if (addNameToSocketId(socket) === -1){
         return;
     }
     return next();
@@ -142,9 +149,10 @@ io.use(function(socket, next){
 
 // Event on connection
 io.sockets.on('connection', function(socket){
+    "use strict";
     // add mapping from socketid to socket
     addIDtoSocket(socket);
-    socket.emit('push_socketid', socket.id)
+    socket.emit('push_socketid', socket.id);
 
     // remove on disconnect
     socket.on('disconnect', function(){
@@ -159,14 +167,15 @@ io.sockets.on('connection', function(socket){
     // remove on message
     socket.on('push_test', function(type, message){
         logMessage('Debugging ' + type + ' (' + message + ')');
-        if (type == 'success')
+        if (type === 'success') {
             socket.emit('push_test', {type: 'success', msg: message});
-        else if (type == 'danger')
+        } else if (type === 'danger') {
             socket.emit('push_test', {type: 'warning', msg: message});
-        else if (type == 'info')
+        } else if (type === 'info') {
             socket.emit('push_test', {type: 'info', msg: message});
-        else
+        } else {
             socket.emit('push_test', {type: 'unknown', msg: message});
+        }
     });
 });
 
@@ -176,41 +185,43 @@ io.sockets.on('connection', function(socket){
 
 // route
 app.get('/publish', function(req, res){
-    var params = getDictOfParams(req['url']);
+    "use strict";
+    var params = getDictOfParams(req.url);
 
-    if (params == ''){
+    if (params === ''){
         writeResponse(res, 400, '0');
         logMessage('  Empty params!');
         return;
-    } else if (params['type'] != 'success' &&
-            params['type'] != 'info' &&
-            params['type'] != 'warning'){
+    } else if (params.type !== 'success' &&
+            params.type !== 'info' &&
+            params.type !== 'warning'){
         writeResponse(res, 400, '0');
-        logMessage('  Unknown type: \'' + params['type'] + '\'');
+        logMessage('  Unknown type: \'' + params.type + '\'');
         return;
     }
 
     try {
-        var socket_id = mapNameToSocket[params['nickname']];
+        var socket_id = mapNameToSocket[params.nickname];
         mapIDtoSocket[socket_id].emit('publish', params);
         writeResponse(res, 200, '1');
     } catch (e) {
-        logMessage('  No socket for socket_id ' + params['socket_id'] + ': ' + e.message);
+        logMessage('  No socket for socket_id ' + params.socket_id + ': ' + e.message);
         writeResponse(res, 400, '0');
     }
 });
 
 app.get('/recent_review', function(req, res){
-    var params = getDictOfParams(req['url']);
+    "use strict";
+    var params = getDictOfParams(req.url);
 
-    if (params == ''){
+    if (params === ''){
         writeResponse(res, 400, '0');
         logMessage('  Empty params!');
         return;
     }
 
     try {
-        var socket_id = mapNameToSocket[params['reviewer_name']];
+        var socket_id = mapNameToSocket[params.reviewer_name];
         mapIDtoSocket[socket_id].emit('recent_review', params);
         writeResponse(res, 200, '1');
     } catch (e) {
@@ -230,17 +241,19 @@ app.get('/recent_review', function(req, res){
  * @param body string
  */
 writeResponse = function(response, statuscode, body){
+    "use strict";
     logMessage('  Write response with ' + statuscode + ' and body ' + body);
     response.writeHead(statuscode);
     response.write(body);
     response.end();
-}
+};
 
 /**
  * Add socketid of client to dictionary
  * @param socket Socket
  */
 addIDtoSocket = function(socket){
+    "use strict";
     mapIDtoSocket[socket.id] = socket;
     logMessage('Added ' + socket.id + ' into socketid dict');
 };
@@ -250,6 +263,7 @@ addIDtoSocket = function(socket){
  * @param socket_id integer
  */
 removeIDtoSocket = function(socket_id){
+    "use strict";
     delete mapIDtoSocket[socket_id];
     logMessage('Removed ' + socket_id + ' from socketid dict');
 };
@@ -260,9 +274,10 @@ removeIDtoSocket = function(socket_id){
  * @param socketid integer
  */
 addNameToSocketId = function(socket){
+    "use strict";
     var name = socket.handshake.query.nickname;
     var socketid = socket.id;
-    if (name.length == 0){
+    if (name.length === 0){
         logMessage('Empty name!');
         return -1;
     }
@@ -276,6 +291,7 @@ addNameToSocketId = function(socket){
  * @param name String
  */
 removeNameToSocketId = function(name){
+    "use strict";
     logMessage('Removed ' + name + ':' + mapNameToSocket[name] + ' from name dict');
     delete mapNameToSocket[name];
 };
@@ -285,13 +301,17 @@ removeNameToSocketId = function(name){
  * @param msg String
  */
 logMessage = function(msg){
-    if (is_log_console || is_log_file)
-        var time = new Date().today() + ' ' + new Date().timeNow();
-    if (is_log_console)
+    "use strict";
+    var tiem = '';
+    if (is_log_console || is_log_file) {
+        time = new Date().today() + ' ' + new Date().timeNow();
+    }
+    if (is_log_console) {
         console.log(time + ' ' + msg);
+    }
     if (is_log_file){
         var path_for_log = 'log/server_' + new Date().todayForLog() + '.log';
-        touch(path_for_log)
+        touch(path_for_log);
         fs.appendFile(path_for_log, time + ' ' + msg + '\n');
     }
 };
@@ -302,6 +322,7 @@ logMessage = function(msg){
  * @return dictionary
  */
 getDictOfParams = function(url){
+    "use strict";
     logMessage(url);
     var param = url.substr(url.indexOf('?')+1);
     var params = param.split('&');
@@ -309,10 +330,11 @@ getDictOfParams = function(url){
     var split = '';
     params.forEach(function(entry) {
         split = entry.split('=');
-        if (split[0] == 'socket_id')
+        if (split[0] === 'socket_id') {
             split[1] = '/#' + split[1];
-        else if (split[0] == 'msg')
+        } else if (split[0] === 'msg') {
             split[1] = split[1].replace(/\%20/g, ' ');
+        }
 
         dict[split[0]] = split[1];
         logMessage('  Reading params: ' + split[0] + ' -> ' + split[1]);
@@ -326,30 +348,34 @@ getDictOfParams = function(url){
 
 // Enhance the Date with a today function, which returns DD.MM.YYYY
 Date.prototype.today = function () {
-    return ((this.getDate() < 10)?"0":"") + this.getDate() + "."
-        + (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) + "."
-        + this.getFullYear();
+    "use strict";
+    return ((this.getDate() < 10)?"0":"") + this.getDate() + "." +
+        (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) + "." +
+        this.getFullYear();
 };
 
 Date.prototype.todayForLog = function () {
+    "use strict";
     return this.getFullYear() +
-        + (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +
-        + ((this.getDate() < 10)?"0":"") + this.getDate();
+        (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +
+        ((this.getDate() < 10)?"0":"") + this.getDate();
 };
 
 // Enhance the Date with a today function, which returns HH:MM:SS
 Date.prototype.timeNow = function () {
-     return ((this.getHours() < 10)?"0":"") + this.getHours() + ":"
-        + ((this.getMinutes() < 10)?"0":"") + this.getMinutes() + ":"
-        + ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+    "use strict";
+     return ((this.getHours() < 10)?"0":"") + this.getHours() + ":" +
+        ((this.getMinutes() < 10)?"0":"") + this.getMinutes() + ":" +
+        ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
 };
 
 // Enhance the Date with a today function, which returns YYYYMMDD_HHMMSS
 Date.prototype.logNow = function () {
+    "use strict";
      return  this.getFullYear()
-         + (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +
-         + ((this.getDate() < 10)?"0":"") + this.getDate() + "_"
-         + ((this.getHours() < 10)?"0":"") + this.getHours() +
-         + ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +
-         + ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+         (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +
+         ((this.getDate() < 10)?"0":"") + this.getDate() + "_" +
+         ((this.getHours() < 10)?"0":"") + this.getHours() +
+         ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +
+         ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
 };

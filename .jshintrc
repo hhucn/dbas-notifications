@@ -92,6 +92,7 @@
     "-W083"         : true,     // don't make function in loops
     "-W098"         : true,     // x is defined, but not used
     "-W117"         : true,     // x is not defined
+    "-W121"         : true,     // x is not defined
 
     // Custom Globals
     "globals"       : {         // additional predefined global variables
