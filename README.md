@@ -1,4 +1,4 @@
-# Bidirectional communication for [D-BAS](https://gitlab.cs.uni-duesseldorf.de/project/dbas)
+# Bidirectional communication for [D-BAS](https://github.com/hhucn/dbas)
 
 Using socket.io and node.js
 
