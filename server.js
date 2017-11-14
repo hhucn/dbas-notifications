@@ -117,7 +117,7 @@ if (is_global_mode){
         });
     } catch (err) {
         console.log('ERROR: Certificates could not be found!');
-        console.log('       Starting without certificates and without https!');
+        console.log('       Starting without http only!');
         var server = http.createServer(app).listen(app.get('port'), function(){
             "use strict";
             console.log('Express server listening with http on port ' + app.get('port'));
