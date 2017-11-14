@@ -4,7 +4,7 @@
 var port = 5222;
 var mapIDtoSocket = {};
 var mapNameToSocket = {};
-var version = '0.3.8';
+var version = '0.3.9';
 
 var express = require('express');
 var https = require('https');
