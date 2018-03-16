@@ -3,7 +3,7 @@
   "version": "0.3.9",
   "description": "Notification system for D-BAS",
   "dependencies": {
-    "express": "^4.16.2",
+    "express": "^4.16.3",
     "fs": "0.0.2",
     "http": "0.0.0",
     "https": "^1.0.0",
