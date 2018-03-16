@@ -5,7 +5,7 @@ Using socket.io and node.js
 Install:
 
 ```bash
-$ npm install
+$ yarn install
 ```
 
 Run:
@@ -15,7 +15,7 @@ $ nodejs server.js
 ```
 
 Requirements:
-* npm
+* yarn
 
 
 Options:
